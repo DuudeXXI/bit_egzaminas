@@ -142,16 +142,16 @@ app.post("/server/meals", (req, res) => {
     });
 });
 
-// app.post("/home/orders/:id", (req, res) => {
-//     const sql = `
-//     INSERT INTO uzsakymai (comment, meal_id)
-//     VALUES (?, ?)
-//     `;
-//     con.query(sql, [req.body.comment, req.body.meal_id, req.params.id], (err, result) => {
-//         if (err) throw err;
-//         res.send(result);
-//     });
-// });
+app.post("/home/orders", (req, res) => {
+    const sql = `
+    INSERT INTO uzsakymai (comment, meal_id)
+    VALUES (?, ?)
+    `;
+    con.query(sql, [req.body.comment, req.body.meal_id], (err, result) => {
+        if (err) throw err;
+        res.send(result);
+    });
+});
 
 //READ ALL
 app.get("/server/meals", (req, res) => {
@@ -164,43 +164,19 @@ app.get("/server/meals", (req, res) => {
         res.send(result);
     });
 });
-// //READ ALL HOME
-// app.get("/home/clothes", (req, res) => {
-//     const sql = `
-//     SELECT *
-//     FROM clothes
-//     `;
-//     con.query(sql, (err, result) => {
-//         if (err) throw err;
-//         res.send(result);
-//     });
-// });
 
-// app.get("/server/orders", (req, res) => {
-//     const sql = `
-//     SELECT c.*, o.id, o.size, o.comment, o.client_id, o.status
-//     FROM clothes AS c
-//     LEFT JOIN orders AS o
-//     ON o.clothe_id = c.id
-//     `;
-//     con.query(sql, (err, result) => {
-//         if (err) throw err;
-//         res.send(result);
-//     });
-// });
-
-// app.get("/user/orders", (req, res) => {
-//     const sql = `
-//     SELECT c.*, o.id, o.size, o.comment, o.client_id, o.status
-//     FROM clothes AS c
-//     LEFT JOIN orders AS o
-//     ON o.clothe_id = c.id
-//     `;
-//     con.query(sql, (err, result) => {
-//         if (err) throw err;
-//         res.send(result);
-//     });
-// });
+app.get("/home/meals", (req, res) => {
+    const sql = `
+    SELECT p.*, o.comment, o.meal_id
+    FROM patiekalai AS p
+    LEFT JOIN uzsakymai AS o
+    ON o.meal_id = p.id
+    `;
+    con.query(sql, (err, result) => {
+        if (err) throw err;
+        res.send(result);
+    });
+});
 
 //DELETE
 app.delete("/server/meals/:id", (req, res) => {
@@ -256,17 +232,20 @@ app.put("/server/meals/:id", (req, res) => {
     });
 });
 
-// app.put("/server/orders/:id", (req, res) => {
-//     const sql = `
-//     UPDATE orders
-//     SET status = ?
-//     WHERE id = ?
-//     `;
-//     con.query(sql, [req.body.status, req.params.id], (err, result) => {
-//         if (err) throw err;
-//         res.send(result);
-//     });
-// });
+app.put("/home/meals/:id", (req, res) => {
+    const sql = `
+    UPDATE patiekalai
+    SET 
+    rating_sum = rating_sum + ?, 
+    rating_count = rating_count + 1, 
+    rating = rating_sum / rating_count
+    WHERE id = ?
+    `;
+    con.query(sql, [req.body.rate, req.params.id], (err, result) => {
+        if (err) throw err;
+        res.send(result);
+    });
+});
 
 app.listen(port, () => {
     console.log(`Server port: ${port} ready for Exam!`)
