@@ -144,10 +144,10 @@ app.post("/server/meals", (req, res) => {
 
 app.post("/home/orders", (req, res) => {
     const sql = `
-    INSERT INTO uzsakymai (comment, meal_id)
-    VALUES (?, ?)
+    INSERT INTO uzsakymai (comment, meal_id, client_id)
+    VALUES (?, ?, ?)
     `;
-    con.query(sql, [req.body.comment, req.body.meal_id], (err, result) => {
+    con.query(sql, [req.body.comment, req.body.meal_id, req.body.client_id], (err, result) => {
         if (err) throw err;
         res.send(result);
     });
@@ -167,7 +167,7 @@ app.get("/server/meals", (req, res) => {
 
 app.get("/home/meals", (req, res) => {
     const sql = `
-    SELECT p.*, o.comment, o.meal_id
+    SELECT p.*, o.comment, o.meal_id, o.client_id
     FROM patiekalai AS p
     LEFT JOIN uzsakymai AS o
     ON o.meal_id = p.id
